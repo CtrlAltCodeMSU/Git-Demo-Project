@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_work_order_form_inherit_msu" model="ir.ui.view">
+        <field name="name">work.order.form.inherit.msu</field>
+        <field name="model">work.order</field>
+        <field name="inherit_id" ref="holzinhome_operations.view_work_order_form_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add Delivered Qty between Department Status and Verified from Site -->
+            <xpath expr="//field[@name='work_order_line_ids']/list/field[@name='department_status']" position="after">
+                <field name="delivered_qty" column_invisible="parent.state != 'confirm'"/>
+            </xpath>
+
+            <!-- Add Fabric Description Field after Fabrics -->
+            <xpath expr="//field[@name='work_order_line_ids']/list/field[@name='fabric']" position="after">
+                <field name="fabric_description" width="300px" string="Fabric Description"/>
+            </xpath>
+
+            <xpath expr="//field[@name='work_order_line_ids']/list/field[@name='delivery_date']" position="attributes">
+                <attribute name="force_save">1</attribute>
+            </xpath>
+
+            <!-- color the whole list row and make header sticky -->
+            <xpath expr="//field[@name='work_order_line_ids']/list" position="attributes">
+                <attribute name="decoration-success">department_status == 'delivered'</attribute>
+                <attribute name="editable">bottom</attribute>
+                <attribute name="sticky_header">1</attribute>
+                <attribute name="class">o_sticky_header</attribute>
+            </xpath>
+
+            <!-- Add Total Items Qty to Footer -->
+            <xpath expr="//field[@name='items_cancelled']" position="after">
+                <field name="total_items_qty" readonly="1"/>
+                <field name="total_delivered_qty" readonly="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='location']" position="after">
+                <field name="category" readonly="state in ['cancelled','delivered']"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

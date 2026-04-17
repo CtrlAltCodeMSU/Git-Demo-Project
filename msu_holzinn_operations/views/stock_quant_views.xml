@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_stock_quant_tree_inventory_editable_ext" model="ir.ui.view">
+            <field name="name">stock.quant.inventory.tree.editable.ext</field>
+            <field name="model">stock.quant</field>
+            <field name="inherit_id" ref="stock.view_stock_quant_tree_inventory_editable"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='inventory_quantity']" position="after">
+                    <field name="custom_system_qty" optional="hide"/>
+                    <field name="custom_counted_qty" optional="hide"/>
+                    <field name="custom_difference" optional="hide"/>
+                    <field name="custom_adjustment_date" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

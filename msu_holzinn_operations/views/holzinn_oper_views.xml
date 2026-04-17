@@ -1,0 +1,38 @@
+<odoo>
+    <data>
+        <record id="view_order_form_inherit_msu_holzinn_operations" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit.msu.holzinn.operations</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="holzinhome_operations.view_order_form_inherit_holz"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//field[@name='referren']" position="after">
+                    <field name="project_handover"
+                           invisible="state not in ('sale', 'done')"
+                           readonly="project_handover == True"
+                           force_save="1"/>
+                    
+                    <field name="project_handover_date"
+                           invisible="state not in ('sale', 'done')"
+                           readonly="1"
+                           force_save="1"/>
+                    
+                    <field name="promised_date" required="1"/>
+                </xpath>
+
+                <xpath expr="//field[@name='location']" position="after">
+                    <field name="category"/>
+                </xpath>
+                
+                <xpath expr="//group[@name='note_group']/group[1]" position="inside">
+                    <div class="clearfix mt-2"/>
+                    <div class="oe_inline">
+                        <strong style="margin-right: 10px;">Total Items Qty:</strong>
+                        <field name="total_items_qty" readonly="1" class="oe_inline"/>
+                    </div>
+                </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

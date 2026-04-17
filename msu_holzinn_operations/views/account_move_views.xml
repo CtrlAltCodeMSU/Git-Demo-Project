@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_contractor_bill" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.contractor.bill</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Credit Note smart button -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_credit_notes" 
+                           type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-pencil-square-o" 
+                        invisible="bill_type != 'contractor' or credit_note_count == 0">
+                    <field name="credit_note_count" widget="statinfo" string="Credit Notes"/>
+                </button>
+            </xpath>
+            <!-- Add Bill Type and related fields to the header -->
+            <!-- <xpath expr="//group[@id='header_left_group']" position="before">
+                <div class="alert alert-warning text-center" role="alert" style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">
+                    *** ODOO.SH DEPLOYMENT TEST HEADER ***
+                </div>
+            </xpath> -->
+            
+            <xpath expr="//group[@id='header_left_group']" position="inside">
+                <field name="bill_type"
+                    invisible="move_type not in ('in_invoice', 'in_refund', 'in_receipt') or context.get('default_move_type', 'in_invoice') == 'entry'"/>
+
+                <field name="contractor_type"
+                    invisible="bill_type != 'contractor' or move_type not in ('in_invoice', 'in_refund', 'in_receipt') or context.get('default_move_type', 'in_invoice') == 'entry'"/>
+
+                <field name="work_order_ids" widget="many2many_tags"
+                    invisible="bill_type != 'contractor' or move_type not in ('in_invoice', 'in_refund', 'in_receipt') or context.get('default_move_type', 'in_invoice') == 'entry'"
+                    force_save="1"
+                    options="{'no_create': True}"
+                    context="{'show_project_name': True}"/>
+
+                <field name="department_id"
+                    invisible="bill_type != 'contractor' or move_type not in ('in_invoice', 'in_refund', 'in_receipt') or context.get('default_move_type', 'in_invoice') == 'entry'"
+                    options="{'no_create': True}"/>
+            </xpath>
+            <!-- Modify Invoice Lines List for Contractor Bill specific columns -->
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='product_id']" position="before">
+                <field name="work_order_line_id" 
+                    string="Serial No"
+                    column_invisible="parent.bill_type != 'contractor'"
+                    domain="[
+                        ('work_order_id', 'in', parent.work_order_ids),
+                        ('display_type', 'in', ['line', False]),
+                        ('status_item', '!=', 'cancelled')
+                    ]"
+                    readonly="parent.state != 'draft'"
+                    force_save="1"
+                    width="200px"
+                    options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+
+            <!-- Consolidate name/description column hiding for contractor bills -->
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='name']" position="attributes">
+                <attribute name="column_invisible">parent.bill_type == 'contractor'</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            <!-- Consolidate quantity column hiding for contractor bills-->
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='quantity']" position="attributes">
+                <attribute name="column_invisible">parent.bill_type == 'contractor'</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+            
+        <!-- Target the quantity field inside invoice lines
+            <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='quantity']" position="attributes">
+                <attribute name="attrs">
+                    {'invisible': [('parent.bill_type', '=', 'contractor')]}
+                </attribute>
+            </xpath> -->
+
+            <!-- Also hide the custom description field if it exists (from other modules) -->
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='description']" position="attributes">
+                <attribute name="column_invisible">parent.bill_type == 'contractor'</attribute>
+                <attribute name="force_save">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='invoice_line_ids']/list/field[@name='name']" position="after">
+                <field name="image_1" widget="image" 
+                       column_invisible="parent.bill_type != 'contractor'" 
+                       readonly="1"
+                       force_save="1"
+                       options="{'size': [64, 64]}"/>
+                <field name="image_2" widget="image" 
+                       column_invisible="parent.bill_type != 'contractor'" 
+                       readonly="1"
+                       force_save="1"
+                       options="{'size': [64, 64]}"/>
+                <field name="ser_no_qty" 
+                       string="Serial No Qty"
+                       readonly="parent.state != 'draft'"
+                       force_save="1"
+                       column_invisible="parent.bill_type != 'contractor'"/>
+            </xpath>
+            
+            <!-- Also add to line_ids just in case invoice_line_ids depends on it -->
+            <xpath expr="//field[@name='line_ids']/list/field[@name='account_id']" position="before">
+                <field name="work_order_line_id" column_invisible="True"/>
+                <field name="ser_no_qty" column_invisible="True"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

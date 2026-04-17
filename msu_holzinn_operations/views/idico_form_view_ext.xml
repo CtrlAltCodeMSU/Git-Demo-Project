@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_idico_form_form_inherit_msu" model="ir.ui.view">
+        <field name="name">idico.form.form.inherit.msu</field>
+        <field name="model">idico.form</field>
+        <field name="inherit_id" ref="holzinhome_operations.view_idico_form_form"/>
+        <field name="arch" type="xml">
+            <!-- Add fabric completed checkbox below Creation Date -->
+            <xpath expr="//field[@name='creation_date']" position="after">
+                <field name="is_fabric_completed"  readonly="is_fabric_completed" force_save="1"/>
+            </xpath>
+
+            <!-- Move Description After Fabric Qty in lines and ensure manual entry -->
+            <xpath expr="//field[@name='line_ids']//field[@name='wo_description']" position="replace"/>
+            
+            <xpath expr="//field[@name='line_ids']//field[@name='fabric_id']" position="after">
+                <field name="wo_description" width="200px" string="Dimensions"/>
+            </xpath>
+
+            <!-- <xpath expr="//field[@name='line_ids']//field[@name='fabric_qty']" position="before">
+                <field name="work_order_line_id" invisible="1"/>
+            </xpath> -->
+            
+            <xpath expr="//field[@name='line_ids']//field[@name='fabric_qty']" position="after">
+                <field name="line_description" width="200px" string="Description"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_idico_form_view_list_inherit_msu" model="ir.ui.view">
+        <field name="name">idico.form.view.list.inherit.msu</field>
+        <field name="model">idico.form</field>
+        <field name="inherit_id" ref="holzinhome_operations.view_idico_form_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_order">creation_date desc</attribute>
+            </xpath>
+            <xpath expr="//field[@name='creation_date']" position="after">
+                <field name="confirmation_date" optional="show" widget="date"/>
+                <field name="state" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_idico_form_list_confirmed_inherit_msu" model="ir.ui.view">
+        <field name="name">idico.form.list.confirmed.inherit.msu</field>
+        <field name="model">idico.form</field>
+        <field name="inherit_id" ref="holzinhome_operations.view_idico_form_list_confirmed"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="default_order">confirmation_date desc</attribute>
+            </xpath>
+            <xpath expr="//field[@name='creation_date']" position="after">
+                <field name="confirmation_date" optional="show" widget="date"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_idico_form_line_list" model="ir.ui.view">
+        <field name="name">idico.form.line.list</field>
+        <field name="model">idico.form.line</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <list string="IDICO Form Line">
+                <field name="idico_form_id"/>
+                <field name="partner_id" optional="show"/>
+                <field name="work_id"/>
+                <field name="fabric_id"/>
+                <field name="status_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_idico_form_line_search" model="ir.ui.view">
+        <field name="name">idico.form.line.search</field>
+        <field name="model">idico.form.line</field>
+        <field name="arch" type="xml">
+            <search string="IDICO Form Line Search">
+                <field name="idico_form_id"/>
+                <field name="partner_id"/>
+                <field name="work_id"/>
+                <field name="fabric_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="IDICO Form" name="group_by_form" context="{'group_by': 'idico_form_id'}"/>
+                    <filter string="Customer" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status" name="group_by_status" context="{'group_by': 'status_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

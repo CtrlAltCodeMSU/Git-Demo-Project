@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_inherit_idle_timeout" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.idle.timeout</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Idle Timeout" name="idle_timeout_page">
+                    <group>
+                        <group name="idle_timeout_group" string="Session Activity Control">
+                            <field name="idle_timeout" required="1"/>
+                            <field name="custom_idle_timeout"
+                                   invisible="idle_timeout != 'custom'"
+                                   required="idle_timeout == 'custom'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>
